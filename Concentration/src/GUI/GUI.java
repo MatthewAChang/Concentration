@@ -34,6 +34,7 @@ public class GUI extends JPanel
             instance = new GUI();
         }
         return instance;
+        // Matthew's comment
     }
 
     // Create JFrame
