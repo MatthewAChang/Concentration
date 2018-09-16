@@ -130,6 +130,7 @@ public class GUI extends JPanel
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     button.setText("Hi");
+                    
                 }
             });
             buttons.add(button);
