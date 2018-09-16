@@ -1,6 +1,8 @@
 package Card;
 
-public class Card
+import javax.swing.*;
+
+public class Card extends JButton
 {
     private boolean isFaceUp;
     private int character;

@@ -3,6 +3,8 @@ package GUI;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class GUI extends JPanel
@@ -123,6 +125,14 @@ public class GUI extends JPanel
         {
             JButton button = new JButton("Card");
             buttonPanel.add(button);
+            button.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    button.setText("Hi");
+                    
+                }
+            });
             buttons.add(button);
         }
         buttonPanel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
