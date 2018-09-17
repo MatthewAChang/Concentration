@@ -1,18 +1,24 @@
 package GUI;
 
+import Card.CardButton;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GUI extends JPanel
 {
     private static GUI instance;
-    private static ArrayList<JButton> buttons;
+    private static ArrayList<CardButton> buttons;
     private static ArrayList<JLabel> playerScores;
     private static ArrayList<String> playerNames;
+    private static int clicks;
+
+    private static int[] cardsBucket;
 
     private final static int NUM_OF_PLAYERS = 2;
 
@@ -29,6 +35,8 @@ public class GUI extends JPanel
         buttons = new ArrayList<>();
         playerScores = new ArrayList<>();
         playerNames = new ArrayList<>();
+        clicks = 0;
+        cardsBucket = new int[(NUM_OF_BUTTON_WIDTH * NUM_OF_BUTTON_HEIGHT) / 2];
         AddNames();
         CreateFrame();
     }
@@ -123,20 +131,59 @@ public class GUI extends JPanel
         buttonPanel.setLayout(new GridLayout(NUM_OF_BUTTON_HEIGHT, NUM_OF_BUTTON_WIDTH));
         for(int i = 0; i < NUM_OF_BUTTON_HEIGHT * NUM_OF_BUTTON_WIDTH; i++)
         {
-            JButton button = new JButton("Card");
+            CardButton button = new CardButton(CreateRandomCard());
             buttonPanel.add(button);
-            button.addActionListener(new ActionListener()
-            {
+            button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    button.setText("Hi");
-                    
+                    if (!button.isFaceUp() && clicks < 2)
+                    {
+                        button.setFaceUp();
+                        clicks++;
+                        if(clicks == 2 && CardsEqual() != null)
+                        {
+                            clicks = 0;
+
+                        }
+
+                    }
                 }
             });
             buttons.add(button);
         }
         buttonPanel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         return buttonPanel;
+    }
+
+    private ArrayList<CardButton> CardsEqual()
+    {
+        ArrayList<CardButton> buttonsToBeCompared = new ArrayList<>();
+        for (CardButton b : buttons)
+        {
+            if (b.isFaceUp())
+            {
+                buttonsToBeCompared.add(b);
+            }
+        }
+        if (buttonsToBeCompared.get(0).equals(buttonsToBeCompared.get(1)))
+        {
+            return buttonsToBeCompared;
+        }
+        return null;
+    }
+
+    private int CreateRandomCard()
+    {
+        while (true)
+        {
+            Random rand = new Random();
+            int card = rand.nextInt(9);
+            if (cardsBucket[card] < 2)
+            {
+                cardsBucket[card]++;
+                return card;
+            }
+        }
     }
 
     // Increase the score of a player

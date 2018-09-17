@@ -2,15 +2,15 @@ package Card;
 
 public enum CharacterENum
 {
-    HONOKA(1),
-    ELI(2),
-    KOTORI(3),
-    UMI(4),
-    RIN(5),
-    MAKI(6),
-    NOZOMI(7),
-    HANAYO(8),
-    NICO(9);
+    HONOKA(0),
+    ELI(1),
+    KOTORI(2),
+    UMI(3),
+    RIN(4),
+    MAKI(5),
+    NOZOMI(6),
+    HANAYO(7),
+    NICO(8);
 
     private int character;
 
@@ -24,18 +24,18 @@ public enum CharacterENum
         return character;
     }
 
-    public String toString(int character) {
+    public static String toString(int character) {
         switch(character)
         {
-        case 1: return "Honoka";
-        case 2: return "Eli";
-        case 3: return "Kotori";
-        case 4: return "Umi";
-        case 5: return "Rin";
-        case 6: return "Maki";
-        case 7: return "Nozomi";
-        case 8: return "Hanayo";
-        case 9: return "Nico";
+        case 0: return "Honoka";
+        case 1: return "Eli";
+        case 2: return "Kotori";
+        case 3: return "Umi";
+        case 4: return "Rin";
+        case 5: return "Maki";
+        case 6: return "Nozomi";
+        case 7: return "Hanayo";
+        case 8: return "Nico";
         }
         return null;
     }
