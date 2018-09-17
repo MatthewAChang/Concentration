@@ -7,7 +7,6 @@ public class Game
     public static void Game()
     {
         gui = gui.getInstance();
-        gui.increaseScore(1);
     }
 
 
