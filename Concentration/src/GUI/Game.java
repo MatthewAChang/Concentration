@@ -2,12 +2,10 @@ package GUI;
 
 public class Game
 {
-    protected static GUI gui;
+    protected static Frame frame;
 
     public static void Game()
     {
-        gui = gui.getInstance();
+        frame = frame.getInstance();
     }
-
-
 }
