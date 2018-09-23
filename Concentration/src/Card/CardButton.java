@@ -1,35 +1,29 @@
 package Card;
 
+import GUI.GUI;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class CardButton extends JButton
+public class CardButton extends JButton implements GUI
 {
+    private Icon characterIcon;
+    private Icon baseIcon;
+    private int character;
     private boolean isFaceUp;
     private boolean isMatched;
-    private int character;
-    private Image characterImage;
-    private Image baseImage;
-
 
     public CardButton(int character)
     {
-        try {
-            String imgCharacter = "/images/" + CharacterENum.toString(character) + ".jpg";
-            characterImage = ImageIO.read(getClass().getResource(imgCharacter));
-            baseImage = ImageIO.read(getClass().getResource("/images/Base.jpg"));
-            this.setIcon(new ImageIcon(baseImage));
-        }
-        catch (Exception ex)
-        {
-            System.out.println(ex);
-        }
-        //this.setText(Integer.toString(character));
+        this.character = character;
         isFaceUp = false;
         isMatched = false;
-        this.character = character;
+        characterIcon = CreateIcon("/images/" + CharacterENum.toString(character) + ".jpg");
+        baseIcon = CreateIcon("/images/Base.jpg");
+        this.setIcon(baseIcon);
     }
 
     public void setFaceUp()
@@ -37,12 +31,12 @@ public class CardButton extends JButton
         if(isFaceUp)
         {
             isFaceUp = false;
-            this.setIcon(new ImageIcon(baseImage));
+            this.setIcon(baseIcon);
         }
         else
         {
             isFaceUp = true;
-            this.setIcon(new ImageIcon(characterImage));
+            this.setIcon(characterIcon);
         }
     }
 
@@ -93,5 +87,22 @@ public class CardButton extends JButton
     public int hashCode()
     {
         return Objects.hash(character);
+    }
+
+
+    private Icon CreateIcon(String imageLocation)
+    {
+        try {
+            BufferedImage image = ImageIO.read(getClass().getResource(imageLocation));
+            return new ImageIcon(
+                    image.getScaledInstance(FRAME_WIDTH / NUM_OF_BUTTON_WIDTH,
+                    FRAME_HEIGHT / NUM_OF_BUTTON_HEIGHT,
+                    Image.SCALE_SMOOTH));
+        }
+        catch (Exception ex)
+        {
+            System.out.println(ex);
+        }
+        return null;
     }
 }
