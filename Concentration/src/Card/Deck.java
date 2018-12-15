@@ -11,8 +11,9 @@ import java.util.Random;
 
 public class Deck implements GUI
 {
+    private static boolean pause;
     private static Deck instance;
-    private static CardButton flippedUpCard;
+    private static ArrayList<CardButton> flippedUpCards;
     private static ArrayList<CardButton> buttons;
 
     private static int[] cardsBucket;
@@ -37,23 +38,27 @@ public class Deck implements GUI
             cardButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    cardButton.setFaceUp();
-                    if(flippedUpCard != null)
-                    {
-                        if(flippedUpCard.equals(cardButton))
-                        {
-
-                        }
-                        else
-                        {
-                            flippedUpCard.setFaceUp();
+                    if (!pause) {
+                        if (!cardButton.isMatched() && !cardButton.isFaceUp()) {
                             cardButton.setFaceUp();
+                            if (!flippedUpCards.isEmpty()) {
+                                if (flippedUpCards.get(0).equals(cardButton)) {
+                                    flippedUpCards.get(0).setMatched();
+                                    cardButton.setMatched();
+                                    flippedUpCards.clear();
+                                } else {
+                                    flippedUpCards.add(cardButton);
+                                    pause = true;
+                                }
+                            } else {
+                                flippedUpCards.add(cardButton);
+                            }
                         }
-                        flippedUpCard = null;
-                    }
-                    else
-                    {
-                        flippedUpCard = cardButton;
+                    } else {
+                        pause = false;
+                        flippedUpCards.get(0).setFaceUp();
+                        flippedUpCards.get(1).setFaceUp();
+                        flippedUpCards.clear();
                     }
                 }
             });
@@ -63,7 +68,8 @@ public class Deck implements GUI
 
     private Deck()
     {
-        flippedUpCard = null;
+        pause = false;
+        flippedUpCards = new ArrayList<>();
         buttons = new ArrayList<>();
         cardsBucket = new int[(NUM_OF_BUTTON_WIDTH * NUM_OF_BUTTON_HEIGHT) / 2];
     }

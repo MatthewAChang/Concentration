@@ -42,15 +42,7 @@ public class CardButton extends JButton implements GUI
 
     public void setMatched()
     {
-        if(isMatched)
-        {
-            isMatched = false;
-        }
-        else
-        {
-            isMatched = true;
-            this.setEnabled(false);
-        }
+        isMatched = true;
     }
 
     public boolean isFaceUp()
