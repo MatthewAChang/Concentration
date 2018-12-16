@@ -56,8 +56,8 @@ public class Deck implements GUI
                         }
                     } else {
                         pause = false;
-                        flippedUpCards.get(0).setFaceUp();
-                        flippedUpCards.get(1).setFaceUp();
+                        flippedUpCards.get(0).setFaceDown();
+                        flippedUpCards.get(1).setFaceDown();
                         flippedUpCards.clear();
                     }
                 }

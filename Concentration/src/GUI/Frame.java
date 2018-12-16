@@ -1,6 +1,7 @@
 package GUI;
 
 import Card.Deck;
+import Players.Player;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -11,8 +12,8 @@ public class Frame implements GUI
 {
     private static Frame instance;
     private static Deck deck;
-    private static ArrayList<JLabel> playerScores;
-    private static ArrayList<String> playerNames;
+    private static ArrayList<Player> players;
+    private static int turn;
 
     private final Font font = new Font("Courier New", Font.PLAIN, 18);
 
@@ -28,18 +29,19 @@ public class Frame implements GUI
     private Frame()
     {
         deck = deck.getInstance();
-        playerScores = new ArrayList<>();
-        playerNames = new ArrayList<>();
-        AddNames();
+        players = new ArrayList<>();
+        createPlayers();
         CreateFrame();
+        turn = 1;
     }
 
-    // Add the player names
-    private void AddNames()
+    // Create the players
+
+    private void createPlayers()
     {
         for(int i = 0; i < NUM_OF_PLAYERS; i++)
         {
-            playerNames.add("Player " + (i + 1));
+            players.add(new Player(i + 1));
         }
     }
 
@@ -86,25 +88,27 @@ public class Frame implements GUI
             JPanel playerPanel = new JPanel();
             playerPanel.setLayout(new BorderLayout());
 
-            JLabel playerLabel = new JLabel(playerNames.get(i));
+            JLabel playerLabel = new JLabel(players.get(i).getName());
             playerLabel.setFont(font);
             playerLabel.setBorder(padding);
 
-            playerScores.add(new JLabel("0"));
-            playerScores.get(i).setFont(font);
+            JLabel playerScore = new JLabel(players.get(i).getScore());
+            playerScore.setFont(font);
+            playerScore.setBorder(padding);
+
 
             // Creates the left side of the score board
             if (i % 2 == 0)
             {
                 playerPanel.add(playerLabel, BorderLayout.WEST);
-                playerPanel.add(playerScores.get(i), BorderLayout.EAST);
+                playerPanel.add(playerScore, BorderLayout.EAST);
                 playerContainerPanel.add(playerPanel, BorderLayout.WEST);
             }
             // Creates the right side of the score board
             else
             {
                 playerPanel.add(playerLabel, BorderLayout.EAST);
-                playerPanel.add(playerScores.get(i), BorderLayout.WEST);
+                playerPanel.add(playerScore, BorderLayout.WEST);
                 playerContainerPanel.add(playerPanel, BorderLayout.EAST);
             }
         }
@@ -118,25 +122,6 @@ public class Frame implements GUI
         return deck.addCardButton();
     }
 
-    // Increase the score of a player
-    public boolean increaseScore(int player)
-    {
-        try
-        {
-            int score = Integer.parseInt(playerScores.get(player).getText()) + 1;
-            playerScores.get(player).setText(Integer.toString(score));
-            return true;
-        }
-        catch(Exception e)
-        {
-            Error("Error - " + e.getMessage());
-        }
-        return false;
-    }
 
-    // Outputs an Error Prompt
-    public void Error(String err)
-    {
-        JOptionPane.showMessageDialog(null, err);
-    }
+
 }

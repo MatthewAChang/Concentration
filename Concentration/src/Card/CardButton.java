@@ -28,16 +28,15 @@ public class CardButton extends JButton implements GUI
 
     public void setFaceUp()
     {
-        if(isFaceUp)
-        {
-            isFaceUp = false;
-            this.setIcon(baseIcon);
-        }
-        else
-        {
-            isFaceUp = true;
-            this.setIcon(characterIcon);
-        }
+        isFaceUp = true;
+        this.setIcon(characterIcon);
+    }
+
+    public void setFaceDown()
+    {
+        isFaceUp = false;
+        this.setIcon(baseIcon);
+
     }
 
     public void setMatched()
