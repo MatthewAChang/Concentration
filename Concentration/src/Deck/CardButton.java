@@ -1,4 +1,4 @@
-package Card;
+package Deck;
 
 import GUI.GUI;
 
@@ -52,11 +52,6 @@ public class CardButton extends JButton implements GUI
     public boolean isMatched()
     {
         return isMatched;
-    }
-
-    public int getCharacter()
-    {
-        return character;
     }
 
     @Override

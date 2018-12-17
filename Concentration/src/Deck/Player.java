@@ -1,14 +1,11 @@
-package Players;
+package Deck;
 
 public class Player {
     private String name;
     private int score;
-    private int id;
-
 
     public Player(int id)
     {
-        this.id = id;
         this.name = "Player " + id;
         this.score = 0;
     }
@@ -17,10 +14,6 @@ public class Player {
         this.score++;
     }
 
-    public int getId()
-    {
-        return this.id;
-    }
     public String getScore()
     {
         return Integer.toString(this.score);
