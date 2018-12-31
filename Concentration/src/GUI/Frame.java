@@ -8,15 +8,18 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Frame implements GUI
 {
     private static Frame instance;
+    private static JFrame jFrame;
     private static Deck deck;
     private static ArrayList<Player> players;
     private static int turn;
+    private static int pairsFound;
 
     private static ArrayList<JLabel> playerLabels;
     private static ArrayList<JLabel> scoreLabels;
@@ -25,6 +28,7 @@ public class Frame implements GUI
     private final Font fontBold = new Font("Courier New", Font.BOLD, 18);
 
     private final static int NUM_OF_PLAYERS = 2;
+    private final static int WIN_SCORE = (NUM_OF_PAIRS / 2) + 1;
 
     public static Frame getInstance() {
         if(instance == null) {
@@ -51,7 +55,7 @@ public class Frame implements GUI
         {
             playerLabels.get(i).setFont(font);
             scoreLabels.get(i).setFont(font);
-            scoreLabels.get(i).setText(players.get(i).getScore());
+            scoreLabels.get(i).setText(Integer.toString(players.get(i).getScore()));
         }
         playerLabels.get(turn).setFont(fontBold);
         scoreLabels.get(turn).setFont(fontBold);
@@ -69,16 +73,16 @@ public class Frame implements GUI
     // Create JFrame
     private void createFrame()
     {
-        JFrame frame = new JFrame();
-        frame.setTitle("Love Live Concentration");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        jFrame = new JFrame();
+        jFrame.setTitle("Love Live Concentration");
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.setResizable(false);
 
         // Add the panel to the frame
         JPanel panel = createContainerPanel();
-        frame.getContentPane().add(panel);
-        frame.pack();
-        frame.setVisible(true);
+        jFrame.getContentPane().add(panel);
+        jFrame.pack();
+        jFrame.setVisible(true);
     }
 
     // Create JPanel Container
@@ -113,7 +117,7 @@ public class Frame implements GUI
             playerLabels.get(i).setFont(font);
             playerLabels.get(i).setBorder(padding);
 
-            scoreLabels.add(new JLabel(players.get(i).getScore()));
+            scoreLabels.add(new JLabel(Integer.toString(players.get(i).getScore())));
             scoreLabels.get(i).setFont(font);
             scoreLabels.get(i).setBorder(padding);
 
@@ -141,9 +145,43 @@ public class Frame implements GUI
         return deck.addCardButton();
     }
 
+    private void checkWinner()
+    {
+        if (pairsFound == NUM_OF_PAIRS)
+        {
+            Player winner = players.get(0);
+            for (Player p : players)
+            {
+                if (p.getScore() > winner.getScore())
+                {
+                    winner = p;
+                }
+            }
+            winnerPrompt(winner.getName());
+        }
+        else
+        {
+            for (Player p : players)
+            {
+                if (p.getScore() >= WIN_SCORE)
+                {
+                    winnerPrompt(p.getName());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void winnerPrompt(String winner)
+    {
+        JOptionPane.showMessageDialog(null, "Congratulations " + winner + "!");
+        jFrame.dispatchEvent(new WindowEvent(jFrame, WindowEvent.WINDOW_CLOSING));
+    }
+
     private class Deck
     {
         private boolean pause;
+
         private ArrayList<CardButton> flippedUpCards;
         private ArrayList<CardButton> buttons;
 
@@ -152,6 +190,7 @@ public class Frame implements GUI
         private Deck()
         {
             pause = false;
+            pairsFound = 0;
             flippedUpCards = new ArrayList<>();
             buttons = new ArrayList<>();
             cardsBucket = new int[(NUM_OF_BUTTON_WIDTH * NUM_OF_BUTTON_HEIGHT) / 2];
@@ -170,40 +209,47 @@ public class Frame implements GUI
                 cardButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (!pause) {
-                            // A card is picked
-                            if (!cardButton.isMatched() && !cardButton.isFaceUp()) {
-                                cardButton.setFaceUp();
-                                // The card is the second card
-                                if (!flippedUpCards.isEmpty()) {
-                                    // A match is found
-                                    if (flippedUpCards.get(0).equals(cardButton)) {
-                                        flippedUpCards.get(0).setMatched();
-                                        cardButton.setMatched();
-                                        flippedUpCards.clear();
-                                        players.get(turn).addScore();
-                                    // A match is not found
-                                    } else {
-                                        flippedUpCards.add(cardButton);
-                                        pause = true;
-                                    }
-                                // The card is the first card
-                                } else {
-                                    flippedUpCards.add(cardButton);
-                                }
-                            }
-                        } else {
-                            pause = false;
-                            flippedUpCards.get(0).setFaceDown();
-                            flippedUpCards.get(1).setFaceDown();
-                            flippedUpCards.clear();
-                            nextTurn();
-                        }
-                        updatePanel();
+                        click(cardButton);
                     }
                 });
             }
             return buttonPanel;
+        }
+
+        private void click(CardButton cardButton)
+        {
+            if (!pause) {
+                // A card is picked
+                if (!cardButton.isMatched() && !cardButton.isFaceUp()) {
+                    cardButton.setFaceUp();
+                    // The card is the second card
+                    if (!flippedUpCards.isEmpty()) {
+                        // A match is found
+                        if (flippedUpCards.get(0).equals(cardButton)) {
+                            flippedUpCards.get(0).setMatched();
+                            cardButton.setMatched();
+                            flippedUpCards.clear();
+                            players.get(turn).addScore();
+                            pairsFound += 1;
+                            // A match is not found
+                        } else {
+                            flippedUpCards.add(cardButton);
+                            pause = true;
+                        }
+                        // The card is the first card
+                    } else {
+                        flippedUpCards.add(cardButton);
+                    }
+                }
+            } else {
+                pause = false;
+                flippedUpCards.get(0).setFaceDown();
+                flippedUpCards.get(1).setFaceDown();
+                flippedUpCards.clear();
+                nextTurn();
+            }
+            updatePanel();
+            checkWinner();
         }
 
         private int createRandomCard()
@@ -228,6 +274,5 @@ public class Frame implements GUI
                 turn = turn % NUM_OF_PLAYERS;
             }
         }
-
     }
 }

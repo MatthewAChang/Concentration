@@ -14,9 +14,9 @@ public class Player {
         this.score++;
     }
 
-    public String getScore()
+    public int getScore()
     {
-        return Integer.toString(this.score);
+        return this.score;
     }
 
     public String getName()
